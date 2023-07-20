@@ -1,0 +1,39 @@
+import socket
+import threading
+import random
+
+# List of quotes
+quotes = [
+    "“The beautiful thing about learning is that no one can take it away from you.” — B.B. King",
+    "“You are not your resume, you are your work.” — Seth Godin",
+    "“We must accept finite disappointment, but we must never lose infinite hope.” — Martin Luther King",
+    "“Do the hard jobs first. The easy jobs will take care of themselves.” — Dale Carnegie",
+    "“You make mistakes. Mistakes don’t make you.” — Anonymous"
+]
+
+# Function to handle a client request
+def handle_client(client_socket):
+    random_quote = random.choice(quotes)
+    client_socket.send(random_quote.encode('utf-8'))
+    client_socket.close()
+
+# Main server function
+def main():
+    host = "192.168.231.131"
+    port = 8888
+
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind((host, port))
+    server_socket.listen(5)
+
+    print(f"[*] Server listening on {host}:{port}")
+
+    while True:
+        client_socket, address = server_socket.accept()
+        print(f"[*] Accepted connection from {address[0]}:{address[1]}")
+
+        client_handler = threading.Thread(target=handle_client, args=(client_socket,))
+        client_handler.start()
+
+if __name__ == "__main__":
+    main()
